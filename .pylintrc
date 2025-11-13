@@ -1,0 +1,19 @@
+[MASTER]
+# Allow C extensions like PySide6 to be treated as extension packages
+extension-pkg-whitelist=PySide6
+
+[MESSAGES CONTROL]
+# Disable some noisy/format-related messages that we auto-fix with black
+disable=
+    C0303,  # trailing-whitespace
+    C0304,  # missing-final-newline
+
+[FORMAT]
+# max-line-length left at default; black will enforce formatting
+
+[REPORTS]
+output-format = colorized
+
+[TYPECHECK]
+# Treat PySide6 dynamic members as generated to avoid false no-member errors
+generated-members=PySide6.*,connect,emit
