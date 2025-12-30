@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        pip install pytest pytest-cov pylint
+    - name: Lint with pylint
+      run: |
+        # 运行 pylint 检查 core 目录
+        # 如果分数低于阈值可能会失败，这里我们允许它继续或者你可以设置 --fail-under
+        pylint core/ || true
+    - name: Run tests with pytest
+      run: |
+        pytest --cov=core tests/
