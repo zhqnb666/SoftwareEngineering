@@ -141,9 +141,10 @@ class TestDatabase:
         # init_db catches exception and prints it, doesn't raise
         # We can check if it calls rollback
         db.rollback = MagicMock()
-        
-        db.init_db()
-        
+
+        with pytest.raises(Exception, match="Init Error"):
+            db.init_db()
+
         db.rollback.assert_called_once()
         db.close()
 
