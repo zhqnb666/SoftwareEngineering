@@ -189,7 +189,8 @@ class ProfileManager:
 
             params.append(profile_id)
 
-            sql = f"UPDATE profiles SET {', '.join(update_fields)} WHERE id = ?"
+            # Safe: update_fields contains static strings with placeholders
+            sql = f"UPDATE profiles SET {', '.join(update_fields)} WHERE id = ?"  # nosec
 
             rows_affected = self.db.execute(sql, tuple(params))
             self.db.commit()

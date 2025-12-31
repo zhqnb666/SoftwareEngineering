@@ -117,7 +117,10 @@ class DataImporter:
         # 首先验证文件
         is_valid, errors = self.validate_csv(filepath)
         if not is_valid:
-            return 0, errors
+            # 过滤掉行级错误，只保留致命错误
+            fatal_errors = [e for e in errors if not (e.startswith("第") and "行" in e)]
+            if fatal_errors:
+                return 0, fatal_errors
 
         imported_count = 0
         import_errors = []

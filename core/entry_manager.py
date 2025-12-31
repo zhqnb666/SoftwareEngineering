@@ -141,11 +141,12 @@ class EntryManager:
                 params.append(filters.category)
 
         # 执行查询
+        # Safe: where_conditions contains static strings with placeholders
         sql = f"""
             SELECT * FROM entries 
             WHERE {' AND '.join(where_conditions)} 
             ORDER BY date DESC, id DESC
-        """
+        """  # nosec
 
         rows = self.db.fetchall(sql, tuple(params))
 
@@ -224,21 +225,23 @@ class EntryManager:
         where_clause = " AND ".join(where_conditions)
 
         # 查询收入统计
+        # Safe: where_clause is constructed from static strings
         income_sql = f"""
             SELECT COALESCE(SUM(amount), 0) as total, COUNT(*) as count 
             FROM entries 
             WHERE {where_clause} AND type = '收入'
-        """
+        """  # nosec
         income_row = self.db.fetchone(income_sql, tuple(params))
         total_income = income_row["total"] if income_row else 0
         income_count = income_row["count"] if income_row else 0
 
         # 查询支出统计
+        # Safe: where_clause is constructed from static strings
         expense_sql = f"""
             SELECT COALESCE(SUM(amount), 0) as total, COUNT(*) as count 
             FROM entries 
             WHERE {where_clause} AND type = '支出'
-        """
+        """  # nosec
         expense_row = self.db.fetchone(expense_sql, tuple(params))
         total_expense = expense_row["total"] if expense_row else 0
         expense_count = expense_row["count"] if expense_row else 0
@@ -327,7 +330,8 @@ class EntryManager:
 
         try:
             params.append(entry_id)
-            sql = f"UPDATE entries SET {', '.join(update_fields)} WHERE id = ?"
+            # Safe: update_fields contains static strings with placeholders
+            sql = f"UPDATE entries SET {', '.join(update_fields)} WHERE id = ?"  # nosec
 
             rows_affected = self.db.execute(sql, tuple(params))
             self.db.commit()

@@ -4,8 +4,22 @@
 """
 
 import sqlite3
+from datetime import date, datetime
 from pathlib import Path
 from typing import List, Optional, Tuple
+
+
+# 注册适配器以消除 Python 3.12+ 的 DeprecationWarning
+def adapt_date(val):
+    return val.isoformat()
+
+
+def adapt_datetime(val):
+    return val.isoformat(" ")
+
+
+sqlite3.register_adapter(date, adapt_date)
+sqlite3.register_adapter(datetime, adapt_datetime)
 
 
 class Database:

@@ -179,9 +179,14 @@ class CategoryManager:
             ValueError: 分类已存在
         """
         # 检查分类是否已存在
-        existing = self.db.fetchone(
-            "SELECT id FROM categories WHERE name = ? AND parent = ?", (name, parent)
-        )
+        if parent is None:
+            existing = self.db.fetchone(
+                "SELECT id FROM categories WHERE name = ? AND parent IS NULL", (name,)
+            )
+        else:
+            existing = self.db.fetchone(
+                "SELECT id FROM categories WHERE name = ? AND parent = ?", (name, parent)
+            )
 
         if existing:
             raise ValueError(f"分类 '{name}' 已存在")
@@ -231,9 +236,14 @@ class CategoryManager:
         Returns:
             分类对象或 None
         """
-        row = self.db.fetchone(
-            "SELECT * FROM categories WHERE name = ? AND parent = ?", (name, parent)
-        )
+        if parent is None:
+            row = self.db.fetchone(
+                "SELECT * FROM categories WHERE name = ? AND parent IS NULL", (name,)
+            )
+        else:
+            row = self.db.fetchone(
+                "SELECT * FROM categories WHERE name = ? AND parent = ?", (name, parent)
+            )
 
         if row:
             return Category(id=row["id"], name=row["name"], parent=row["parent"])
